@@ -31,3 +31,20 @@ table {
   font-size: 1.1em;
   color: #0056b3; 
 }
+
+.chart-card {
+  margin-top: 20px;
+}
+
+.stat-card .base-price {
+  display: block;
+  font-size: 0.8em;
+  color: #888;
+  margin-top: 5px;
+  text-decoration: line-through;
+}
+
+.table-card .price-base {
+  text-decoration: line-through;
+  color: #888;
+}
