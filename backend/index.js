@@ -27,10 +27,19 @@ let simulationState = {
   isEvent: false, eventMultiplier: 1.0
 };
 
+let settings = {
+  salesSimulation: true,
+  weatherSimulation: true,
+  eventSimulation: true
+};
+
 app.get('/products', (req, res) => res.json(routes));
 
 app.post('/routes', (req, res) => {
   const { name, basePrice } = req.body;
+  if (!name || !basePrice) {
+    return res.status(400).json({ message: 'Nome e Preço Base são obrigatórios.' });
+  }
   const newId = routes.length > 0 ? Math.max(...routes.map(r => r.id)) + 1 : 1;
   const newRoute = {
     id: newId, name, basePrice: parseFloat(basePrice), currentPrice: parseFloat(basePrice)
@@ -58,10 +67,25 @@ function updateSimulationContext() {
   } else {
     simulationState.timeOfDay = "Horário Normal"; simulationState.timeMultiplier = 1.0;
   }
-  if (!simulationState.isRaining && Math.random() < 0.15) {
-    simulationState.isRaining = true; simulationState.weatherMultiplier = 1.3;
-  } else if (simulationState.isRaining && Math.random() < 0.30) {
-    simulationState.isRaining = false; simulationState.weatherMultiplier = 1.0;
+
+  if (settings.weatherSimulation) {
+    if (!simulationState.isRaining && Math.random() < 0.15) {
+      console.log("!!! CONTEXTO: Começou a chover!");
+      simulationState.isRaining = true; simulationState.weatherMultiplier = 1.3;
+    } else if (simulationState.isRaining && Math.random() < 0.30) {
+      console.log("!!! CONTEXTO: Parou de chover!");
+      simulationState.isRaining = false; simulationState.weatherMultiplier = 1.0;
+    }
+  }
+
+  if (settings.eventSimulation) {
+    if (!simulationState.isEvent && Math.random() < 0.10) {
+      console.log("!!! CONTEXTO: Um evento começou na cidade!");
+      simulationState.isEvent = true; simulationState.eventMultiplier = 1.8;
+    } else if (simulationState.isEvent && Math.random() < 0.40) {
+      console.log("!!! CONTEXTO: O evento terminou.");
+      simulationState.isEvent = false; simulationState.eventMultiplier = 1.0;
+    }
   }
 }
 
@@ -82,6 +106,7 @@ function applyDynamicPricingAndEmit() {
 }
 
 function simulateSale() {
+  if (!settings.salesSimulation) return;
   if (routes.length === 0) return;
 
   const route = routes[Math.floor(Math.random() * routes.length)];
@@ -143,8 +168,18 @@ setInterval(emitFinanceUpdate, 5000);
 io.on('connection', (socket) => {
   console.log('Um usuário (Angular) se conectou');
   socket.emit('price-update', { products: routes, context: "Conectado" });
+
+  socket.on('update-setting', (setting) => {
+    if (settings.hasOwnProperty(setting.key)) {
+      settings[setting.key] = setting.value;
+      console.log(`CONFIG ATUALIZADA: ${setting.key} = ${setting.value}`);
+      io.emit('settings-changed', settings);
+    }
+  });
+
+  socket.emit('settings-changed', settings);
 });
 
 server.listen(PORT, () => {
-  console.log(`Servidor CoinPilot (Backend modulo Financeiro) rodando em http://localhost:${PORT}`);
+  console.log(`Servidor CoinPilot (Backend V9) rodando em http://localhost:${PORT}`);
 });

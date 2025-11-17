@@ -13,6 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { DashboardComponent } from './pages/dashboard/dashboard';
 import { RoutesComponent } from './pages/routes/routes';
 import { FinancialComponent } from './pages/financial/financial';
+import { SettingsComponent } from './pages/settings/settings';
 
 
 const config: SocketIoConfig = { 
@@ -23,7 +24,8 @@ const appRoutes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'routes', component: RoutesComponent },
-  { path: 'financial', component: FinancialComponent }
+  { path: 'financial', component: FinancialComponent },
+  { path: 'settings', component: SettingsComponent }
 ];
 
 export const appConfig: ApplicationConfig = {
