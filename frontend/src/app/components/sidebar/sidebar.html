@@ -19,11 +19,15 @@
     <span>Rotas</span>
   </a>
   
-  <a mat-list-item href="#" (click)="false"> <mat-icon>account_balance_wallet</mat-icon>
+  <a mat-list-item 
+     routerLink="/financial" 
+     routerLinkActive="active-link">
+    <mat-icon>account_balance_wallet</mat-icon>
     <span>Financeiro</span>
   </a>
   
-  <a mat-list-item href="#" (click)="false"> <mat-icon>settings</mat-icon>
+  <a mat-list-item href="#" (click)="false">
+    <mat-icon>settings</mat-icon>
     <span>Configurações</span>
   </a>
 </mat-nav-list>
