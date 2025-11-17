@@ -104,7 +104,7 @@ export class DashboardComponent implements OnInit {
   }
 
   getCardColor(index: number) {
-    const colors = ['#29b6f6', '#66bb6a', '#ffa726', '#e57373']; // Adicionei mais uma cor
+    const colors = ['#29b6f6', '#66bb6a', '#ffa726', '#e57373'];
     return colors[index % colors.length];
   }
 }
